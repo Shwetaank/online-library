@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import {
-  Search,
   ChevronDown,
   ChevronRight,
   BookOpen,
@@ -276,12 +275,11 @@ const FAQPage = () => {
           <h1 className="text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-purple-600">
             Need Help? We&#39;ve Got Answers!
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto text-justify">
             Browse answers by topic or search below. Still stuck? Reach out to
             our support team.
           </p>
           <div className="max-w-xl mx-auto relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <Input
               type="text"
               placeholder="Search FAQs..."
@@ -428,12 +426,12 @@ const FAQPage = () => {
             Our support team is here to help. Reach out and we&apos;ll respond
             within 24 hours.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center ">
             <Link href="/contact">
               <Button
                 size="lg"
                 variant="secondary"
-                className="bg-white text-blue-600 hover:bg-gray-100"
+                className="bg-white text-blue-600 hover:bg-gray-100 cursor-pointer"
               >
                 Contact Support
               </Button>
@@ -441,7 +439,7 @@ const FAQPage = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
+              className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent cursor-pointer"
             >
               Live Chat
             </Button>

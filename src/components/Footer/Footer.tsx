@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -23,7 +22,16 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-const socials = [Facebook, Twitter, Instagram, Linkedin, Github];
+const socials = [
+  { icon: Facebook, href: "https://www.facebook.com/spmorey" },
+  { icon: Twitter, href: "https://x.com/Sin_Greed___" },
+  { icon: Instagram, href: "https://www.instagram.com/shwetaank_/" },
+  {
+    icon: Linkedin,
+    href: "https://www.linkedin.com/in/shwetank-morey-a35484257",
+  },
+  { icon: Github, href: "https://github.com/Shwetaank" },
+];
 
 const quickLinks = [
   { name: "Home", href: "/" },
@@ -45,76 +53,82 @@ const services = [
 
 const ModernFooter: React.FC = () => {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const currentYear = new Date().getFullYear();
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      toast("Thank you for subscribing to our newsletter!");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) throw new Error("Subscription failed.");
+
+      toast.success("Subscribed successfully!");
       setEmail("");
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
+    initial: { opacity: 0, y: 30 },
     whileInView: { opacity: 1, y: 0 },
-    transition: { duration: 0.5 },
+    transition: { duration: 0.6 },
     viewport: { once: true },
   };
 
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Brand Section */}
+    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+      <div className="container mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+          {/* Brand */}
           <motion.div {...fadeInUp} className="space-y-4">
             <div className="flex items-center space-x-2">
-              <BookOpen className="h-8 w-8 text-blue-400" />
-              <div>
-                <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  LibraryMS
-                </span>
-                <div className="text-xs text-gray-400">
-                  Modern Library System
-                </div>
-              </div>
+              <BookOpen className="h-8 w-8 text-blue-500" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                LibraryMS
+              </h1>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              Discover, borrow, and manage your favorite books with our modern
-              library management system. Join thousands of readers in their
-              literary journey.
+            <p className="text-sm text-gray-400 leading-relaxed text-justify">
+              Your one-stop solution to borrow, read, and reserve books online.
+              Stay connected with your reading goals.
             </p>
-            <div className="flex space-x-3">
-              {socials.map((Icon, idx) => (
-                <motion.div
+            <div className="flex space-x-10">
+              {socials.map(({ icon: Icon, href }, idx) => (
+                <motion.a
                   key={idx}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.2 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="text-gray-400 hover:text-blue-500 transition"
                 >
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="hover:bg-blue-600 hover:text-white transition-colors"
-                    aria-label={Icon.name}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </Button>
-                </motion.div>
+                  <Icon className="h-5 w-5" />
+                </motion.a>
               ))}
             </div>
           </motion.div>
 
           {/* Quick Links */}
-          <motion.div {...fadeInUp} className="space-y-4">
-            <h3 className="text-lg font-semibold">Quick Links</h3>
+          <motion.div {...fadeInUp} className="space-y-3">
+            <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-gray-300 hover:text-blue-400 transition-colors text-sm flex items-center group"
+                    className="text-sm text-gray-400 hover:text-blue-400 transition flex items-center"
                   >
-                    <ArrowRight className="h-3 w-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ArrowRight className="h-3 w-3 mr-2" />
                     {link.name}
                   </Link>
                 </li>
@@ -123,13 +137,13 @@ const ModernFooter: React.FC = () => {
           </motion.div>
 
           {/* Services */}
-          <motion.div {...fadeInUp} className="space-y-4">
-            <h3 className="text-lg font-semibold">Services</h3>
+          <motion.div {...fadeInUp} className="space-y-3">
+            <h3 className="text-lg font-semibold mb-2">Services</h3>
             <ul className="space-y-2">
               {services.map((service) => (
                 <li key={service}>
-                  <span className="text-gray-300 text-sm flex items-center group cursor-pointer hover:text-blue-400 transition-colors">
-                    <ArrowRight className="h-3 w-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="text-sm text-gray-400 hover:text-blue-400 flex items-center">
+                    <ArrowRight className="h-3 w-3 mr-2" />
                     {service}
                   </span>
                 </li>
@@ -137,95 +151,74 @@ const ModernFooter: React.FC = () => {
             </ul>
           </motion.div>
 
-          {/* Newsletter & Contact */}
+          {/* Newsletter */}
           <motion.div {...fadeInUp} className="space-y-4">
-            <h3 className="text-lg font-semibold">Stay Connected</h3>
-            <p className="text-gray-300 text-sm">
-              Subscribe to our newsletter for book recommendations and library
-              updates.
+            <h3 className="text-lg font-semibold">Subscribe</h3>
+            <p className="text-sm text-gray-400">
+              Get book updates and library news in your inbox.
             </p>
+            <form onSubmit={handleNewsletterSubmit} className="flex">
+              <Input
+                type="email"
+                placeholder="Email address"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="rounded-r-none text-white bg-gray-800 border-gray-600 placeholder-gray-400"
+              />
+              <Button
+                type="submit"
+                disabled={loading}
+                className="rounded-l-none bg-blue-600 hover:bg-blue-700"
+              >
+                {loading ? "..." : <Mail className="h-4 w-4" />}
+              </Button>
+            </form>
 
-            <motion.form
-              onSubmit={handleNewsletterSubmit}
-              className="space-y-2"
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 rounded-r-none focus:border-blue-500"
-                  required
-                />
-                <Button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 rounded-l-none px-3"
-                >
-                  <Mail className="h-4 w-4" />
-                </Button>
+            <div className="text-sm space-y-1 text-gray-400 pt-4">
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-blue-500" />
+                <a href="tel:+919421317759">+91 9421317759</a>
               </div>
-            </motion.form>
-
-            <div className="space-y-2 pt-4 text-sm text-gray-300">
-              <div className="flex items-center space-x-2">
-                <Phone className="h-4 w-4 text-blue-400" />
-                <span>+1 (555) 123-4567</span>
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-blue-500" />
+                <a href="mailto:spmorey87@gmail.com">spmorey87@gmail.com</a>
               </div>
-              <div className="flex items-center space-x-2">
-                <Mail className="h-4 w-4 text-blue-400" />
-                <span>info@libraryms.com</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4 text-blue-400" />
-                <span>123 Library St, Book City</span>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-blue-500" />
+                <span>Pune, Maharashtra</span>
               </div>
             </div>
           </motion.div>
         </div>
       </div>
 
-      <Separator className="bg-gray-800" />
-
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <motion.div
-            {...fadeInUp}
-            className="flex items-center space-x-1 text-sm text-gray-400"
+      <Separator className="bg-gray-700" />
+      <div className="container mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 space-y-2 md:space-y-0">
+        <motion.div {...fadeInUp} className="flex items-center gap-1">
+          <span>© {currentYear} LibraryMS. Built with</span>
+          <a
+            href="https://shwet.tech/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit Shwet's website"
           >
-            <span>© {currentYear} LibraryMS. Made with</span>
-            <Heart className="h-4 w-4 text-red-500 fill-current" />
-            <span>for book lovers everywhere.</span>
-          </motion.div>
+            <Heart className="h-4 w-4 text-red-500 hover:scale-110 transition-transform" />
+          </a>
 
-          <motion.div
-            {...fadeInUp}
-            className="flex items-center space-x-6 text-sm"
-          >
-            <Link
-              href="/privacy"
-              className="text-gray-400 hover:text-blue-400 transition-colors"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/terms"
-              className="text-gray-400 hover:text-blue-400 transition-colors"
-            >
-              Terms of Service
-            </Link>
-            <Link
-              href="/cookies"
-              className="text-gray-400 hover:text-blue-400 transition-colors"
-            >
-              Cookie Policy
-            </Link>
-          </motion.div>
-        </div>
+          <span>for readers.</span>
+        </motion.div>
+        <motion.div {...fadeInUp} className="flex space-x-6">
+          <Link href="/privacy" className="hover:text-blue-400">
+            Privacy
+          </Link>
+          <Link href="/terms" className="hover:text-blue-400">
+            Terms
+          </Link>
+          <Link href="/cookies" className="hover:text-blue-400">
+            Cookies
+          </Link>
+        </motion.div>
       </div>
     </footer>
   );

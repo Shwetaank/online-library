@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ModernFooter from "@/components/Footer/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { TawkScript } from "./tawk-script";
 
 // Load Google Fonts
 const geistSans = Geist({
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
+        <TawkScript />
         <main className="flex-grow mx-auto w-full max-w-7xl px-4 py-6">
           {children}
         </main>
